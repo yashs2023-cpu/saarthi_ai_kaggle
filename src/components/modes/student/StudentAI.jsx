@@ -70,6 +70,7 @@ export default function StudentAI() {
         persona="student"
         placeholder={t.placeholder}
         suggestedPrompts={t.prompts}
+        aiType="Exam Coach"
       />
     </div>
   );

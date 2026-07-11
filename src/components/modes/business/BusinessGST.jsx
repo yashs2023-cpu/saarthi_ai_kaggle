@@ -26,9 +26,10 @@ export default function BusinessGST() {
   const [loadingAnswer, setLoadingAnswer] = useState(false);
 
   const handleCalculate = () => {
-    if (!invoiceAmount || invoiceAmount <= 0) { showToast('Please enter a valid amount', 'error'); return; }
     const amount = parseFloat(invoiceAmount);
     const rate = parseFloat(gstRate);
+    if (isNaN(amount) || amount <= 0) { showToast('Please enter a valid amount', 'error'); return; }
+    if (isNaN(rate) || rate < 0) { showToast('Please select a valid GST rate', 'error'); return; }
     const cgstRate = rate / 2;
     const cgstAmount = (amount * cgstRate) / 100;
     const sgstAmount = cgstAmount;

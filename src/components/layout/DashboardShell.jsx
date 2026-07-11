@@ -208,7 +208,11 @@ export default function DashboardShell({ persona, navItems, children }) {
                 <button style={styles.closeChatBtn} onClick={() => setChatOpen(false)}>✕</button>
               </div>
               <div style={{ height: 450 }}>
-                <AIChat persona={persona.key} placeholder={`Ask ${persona.name} anything...`} />
+                <AIChat
+                  persona={persona.key}
+                  placeholder={`Ask ${persona.name} anything...`}
+                  aiType={persona.key === 'business' ? 'Business Advisor' : persona.key === 'student' ? 'Student Mentor' : persona.key === 'senior' ? 'Senior Guide' : 'Family Assistant'}
+                />
               </div>
             </div>
           )}

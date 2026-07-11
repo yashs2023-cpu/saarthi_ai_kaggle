@@ -70,6 +70,7 @@ export default function BusinessAI() {
         persona="business"
         placeholder={t.placeholder}
         suggestedPrompts={t.prompts}
+        aiType="GST Specialist"
       />
     </div>
   );

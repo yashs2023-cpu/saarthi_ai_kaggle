@@ -70,6 +70,7 @@ export default function SeniorAI() {
         persona="senior"
         placeholder={t.placeholder}
         suggestedPrompts={t.prompts}
+        aiType="Senior Guide"
       />
     </div>
   );

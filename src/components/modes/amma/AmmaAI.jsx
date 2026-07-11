@@ -68,6 +68,7 @@ export default function AmmaAI() {
         persona="amma"
         placeholder={t.placeholder}
         suggestedPrompts={t.prompts}
+        aiType="Family Assistant"
       />
     </div>
   );

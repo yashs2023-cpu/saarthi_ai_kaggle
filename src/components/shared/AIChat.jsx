@@ -43,6 +43,13 @@ const PERSONA_COLORS = {
   senior:   '#0EA5E9',
 };
 
+const AI_TYPE_OPTIONS = {
+  amma:     ['Family Assistant', 'Recipe Helper', 'Scheme Guide'],
+  student:  ['Student Mentor', 'Exam Coach', 'Career Planner'],
+  business: ['Business Advisor', 'GST Specialist', 'Marketing Strategist'],
+  senior:   ['Senior Guide', 'Health Helper', 'Scam Protector'],
+};
+
 // ── Simple markdown parser ───────────────────────────────────────────────────
 function parseMarkdown(text) {
   if (!text) return '';
@@ -61,9 +68,10 @@ function parseMarkdown(text) {
 // ─────────────────────────────────────────────────────────────────────────────
 // AIChat Component
 // ─────────────────────────────────────────────────────────────────────────────
-export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) {
+export default function AIChat({ persona, placeholder, suggestedPrompts = [], aiType = null }) {
   const [messages, setMessages]     = useState([]);
   const [input, setInput]           = useState('');
+  const [selectedAiType, setSelectedAiType] = useState(aiType || AI_TYPE_OPTIONS[persona]?.[0] || 'Assistant');
   const [loading, setLoading]       = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [showMemory, setShowMemory] = useState(false);
@@ -78,6 +86,10 @@ export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) 
 
   const accentColor = PERSONA_COLORS[persona] || '#FF9933';
   const userId = user?.id || user?.uid || user?.email || null;
+
+  useEffect(() => {
+    setSelectedAiType(aiType || AI_TYPE_OPTIONS[persona]?.[0] || 'Assistant');
+  }, [persona, aiType]);
 
   // ── Welcome message ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -103,7 +115,7 @@ export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) 
     if (userId && showMemory) {
       setMemoryStats(memoryService.getStats(userId, persona));
     }
-  }, [userId, persona, showMemory]);
+  }, [userId, persona, showMemory, messages]);
 
   // ── Send message ─────────────────────────────────────────────────────────
   const sendMessage = useCallback(async (text) => {
@@ -133,7 +145,8 @@ export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) 
         persona,
         history,
         language,
-        userId
+        userId,
+        selectedAiType
       );
 
       const assistantMsg = {
@@ -145,6 +158,7 @@ export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) 
         usedRAG: result.usedRAG,
         usedMemory: result.usedMemory,
         agentName: result.agentName,
+        toolsUsed: result.toolsUsed || [],
       };
 
       setMessages(prev => [...prev, assistantMsg]);
@@ -221,11 +235,16 @@ export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) 
 
       {/* ── Toolbar ── */}
       <div style={styles.toolbar}>
-        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
           {/* Agent badge */}
           <div style={{ ...styles.agentBadge, background: accentColor + '18', color: accentColor, border:`1px solid ${accentColor}30` }}>
             {agentRouter.getAgent(persona).emoji} {agentRouter.getAgent(persona).name}
           </div>
+          {selectedAiType && (
+            <div style={{ ...styles.aiTypeBadge, border:`1px solid ${accentColor}30` }}>
+              ⚡ {selectedAiType}
+            </div>
+          )}
           {/* Memory indicator */}
           {userId && (
             <button
@@ -237,7 +256,7 @@ export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) 
             </button>
           )}
         </div>
-        <div style={{ display:'flex', gap:8 }}>
+        <div style={{ display:'flex', gap:8, flexWrap:'wrap', alignItems:'center' }}>
           <button
             style={{ ...styles.toolbarBtn, color: ttsEnabled ? accentColor : 'var(--gray-400)' }}
             onClick={() => setTtsEnabled(!ttsEnabled)}
@@ -254,6 +273,27 @@ export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) 
           </button>
         </div>
       </div>
+
+      {AI_TYPE_OPTIONS[persona]?.length > 1 && (
+        <div style={styles.typeSelectorRow}>
+          <span style={styles.typeSelectorLabel}>Choose AI focus:</span>
+          {AI_TYPE_OPTIONS[persona].map((type) => (
+            <button
+              key={type}
+              style={{
+                ...styles.typeChip,
+                borderColor: selectedAiType === type ? accentColor : 'var(--gray-200)',
+                background: selectedAiType === type ? accentColor + '15' : '#fff',
+                color: selectedAiType === type ? accentColor : 'var(--gray-700)',
+              }}
+              onClick={() => setSelectedAiType(type)}
+              type="button"
+            >
+              {type}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* ── Memory Panel (collapsible) ── */}
       {showMemory && memoryStats && (
@@ -322,6 +362,9 @@ export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) 
                 {msg.usedMemory && (
                   <span style={{ ...styles.metaBadge, color:'#6C63FF' }}>🧠 Memory</span>
                 )}
+                {msg.toolsUsed?.length > 0 && msg.toolsUsed.map(tool => (
+                  <span key={tool} style={{ ...styles.metaBadge, color:'#F59E0B' }}>{tool.replace(/_/g, ' ')}</span>
+                ))}
               </div>
             </div>
           </div>
@@ -503,6 +546,29 @@ const styles = {
     border: '1px solid var(--gray-200)',
     borderBottomLeftRadius: 4,
   },
+  typeSelectorRow: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: 8,
+    alignItems: 'center',
+    padding: '10px 14px',
+    borderBottom: '1px solid var(--gray-100)',
+    background: '#fff',
+  },
+  typeSelectorLabel: {
+    fontSize: 12,
+    fontWeight: 700,
+    color: 'var(--gray-500)',
+  },
+  typeChip: {
+    border: '1.5px solid var(--gray-200)',
+    borderRadius: '999px',
+    padding: '6px 12px',
+    background: '#fff',
+    cursor: 'pointer',
+    fontSize: 12,
+    transition: 'all 0.15s ease',
+  },
   bubbleText: {
     fontSize: 13.5,
     lineHeight: 1.65,
@@ -532,6 +598,7 @@ const styles = {
   // Metadata
   msgMeta: {
     display: 'flex',
+    flexWrap: 'wrap',
     alignItems: 'center',
     gap: 6,
     marginTop: 4,
@@ -544,6 +611,15 @@ const styles = {
     fontSize: 10,
     fontWeight: 700,
     opacity: 0.8,
+    padding: '2px 6px',
+    borderRadius: 999,
+    background: 'rgba(0,0,0,0.05)',
+  },
+  aiTypeBadge: {
+    padding: '4px 10px',
+    borderRadius: 999,
+    fontSize: 11,
+    fontWeight: 700,
   },
 
   // Suggestions

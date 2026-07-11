@@ -504,7 +504,7 @@ const agentRouter = {
    *   usedMemory: boolean
    * }>}
    */
-  async route(userMessage, persona, conversationHistory = [], language = 'en', userId = null) {
+  async route(userMessage, persona, conversationHistory = [], language = 'en', userId = null, aiType = null) {
     const agent = AGENTS[persona] || AGENTS.amma;
 
     // ── Step 1: Auto-extract facts for long-term memory ──────────────────
@@ -532,6 +532,7 @@ const agentRouter = {
     // ── Step 4: Execute persona-specific tools if relevant ─────────────
     const toolResults = await executePersonaTools(persona, userMessage, language);
     const toolContext = buildToolContext(toolResults);
+    const aiTypeContext = aiType ? `\nAI SPECIALIZATION: You are currently acting as a ${aiType}. Prioritize this perspective in your response.` : '';
 
     // ── Step 5: Build full system prompt ─────────────────────────────────
     const langInstruction = buildLanguageInstruction(language);
@@ -542,6 +543,7 @@ const agentRouter = {
       memoryContext,
       usedRAG ? ragService.buildContextPrompt(ragContext) : '',
       toolContext,
+      aiTypeContext,
     ]
       .filter(Boolean)
       .join('\n');

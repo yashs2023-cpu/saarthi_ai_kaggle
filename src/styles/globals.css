@@ -817,3 +817,145 @@ body {
     transform: translateX(0) !important;
   }
 }
+
+/* ════════════════════════════════════════════
+   MOBILE RESPONSIVE FIXES
+════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  /* Dashboard content padding on mobile */
+  .dashboard-main .content,
+  [style*="padding: 24px 20px"] {
+    padding: 16px 14px !important;
+  }
+
+  /* Hero section mobile */
+  [style*="min-height: 100vh"][style*="display: flex"] {
+    flex-direction: column;
+    padding: 80px 16px 40px;
+  }
+
+  /* Banner emojis hide on very small screens */
+  @media (max-width: 480px) {
+    [style*="fontSize: 72"] { display: none !important; }
+    [style*="fontSize: 64"] { display: none !important; }
+  }
+}
+
+@media (max-width: 640px) {
+  /* Stat grids stack */
+  .stats-grid-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Wizard options wrap better */
+  .option-row-wrap button {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+  }
+}
+
+/* ════════════════════════════════════════════
+   LOADING SKELETON
+════════════════════════════════════════════ */
+.loading-pulse {
+  background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-200) 50%, var(--gray-100) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--r-md);
+}
+
+/* ════════════════════════════════════════════
+   HOVER EFFECTS
+════════════════════════════════════════════ */
+.saarthi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Quick action buttons hover */
+button[style*="borderRadius: 'var(--r-lg)'"]:hover,
+button[style*="borderRadius: var(--r-lg)"]:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ════════════════════════════════════════════
+   SCROLLBAR HIDE UTILITY
+════════════════════════════════════════════ */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* ════════════════════════════════════════════
+   IMPROVED FOCUS STYLES (accessibility)
+════════════════════════════════════════════ */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--saffron);
+  outline-offset: 2px;
+}
+
+/* ════════════════════════════════════════════
+   FLOATING BUTTON PULSE
+════════════════════════════════════════════ */
+@keyframes floatPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+  50%       { transform: scale(1.05); box-shadow: 0 12px 32px rgba(0,0,0,0.3); }
+}
+
+/* Floating AI button */
+[style*="position: fixed"][style*="borderRadius: '50%'"] {
+  animation: floatPulse 3s ease-in-out infinite;
+}
+
+/* ════════════════════════════════════════════
+   PAGE TRANSITION
+════════════════════════════════════════════ */
+.page-enter {
+  animation: slideInUp 0.3s ease-out;
+}
+
+/* ════════════════════════════════════════════
+   IMPROVED INPUT FOCUS
+════════════════════════════════════════════ */
+.saarthi-input:focus {
+  border-color: var(--saffron);
+  box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.15);
+  background: #fff;
+}
+
+/* ════════════════════════════════════════════
+   BADGE IMPROVEMENTS
+════════════════════════════════════════════ */
+.badge {
+  white-space: nowrap;
+}
+
+/* ════════════════════════════════════════════
+   CARD HOVER — DISABLE ON MOBILE
+════════════════════════════════════════════ */
+@media (hover: none) {
+  .saarthi-card:hover,
+  .saarthi-card-royal:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
+  }
+}
+
+/* ════════════════════════════════════════════
+   PROFESSIONAL FOOTER RESPONSIVE
+════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Footer grid stacks */
+  [style*="footerGrid"] {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  [style*="footerBrandCol"] {
+    grid-column: 1 / -1;
+  }
+}

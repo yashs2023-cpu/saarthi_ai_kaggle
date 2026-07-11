@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
-import { Card } from '../../shared/Card';
 
 const QUICK_ACTIONS = [
   { icon: '🤖', label: 'Ask AI',       path: '/amma/ai',        color: '#D4547A', bg: '#FFF0F5' },

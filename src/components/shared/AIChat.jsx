@@ -77,7 +77,7 @@ export default function AIChat({ persona, placeholder, suggestedPrompts = [] }) 
   const { user }      = useAuth();
 
   const accentColor = PERSONA_COLORS[persona] || '#FF9933';
-  const userId      = user?.id || user?.uid || null;
+  const userId = user?.id || user?.uid || user?.email || null;
 
   // ── Welcome message ──────────────────────────────────────────────────────
   useEffect(() => {

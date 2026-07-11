@@ -332,7 +332,7 @@ const styles = {
     fontSize: 22, cursor: 'pointer', color: '#374151', padding: 4,
   },
   content: {
-    padding: '28px 32px',
+    padding: '24px 20px',
     flex: 1,
   },
   floatingBtn: {

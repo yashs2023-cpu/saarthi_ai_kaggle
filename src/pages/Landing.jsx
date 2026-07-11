@@ -257,30 +257,112 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Footer ── */}
+      {/* ── Professional Footer ── */}
       <footer style={styles.footer}>
-        <div style={styles.footerInner}>
-          <div style={styles.footerBrand}>
-            {/* Tiny Ashoka Chakra Logo */}
-            <svg viewBox="0 0 100 100" width="24" height="24" style={{ animation: 'chakra-spin 25s linear infinite', marginRight: 4 }}>
-              <circle cx="50" cy="50" r="45" fill="none" stroke="var(--gold)" strokeWidth="5" />
-              <circle cx="50" cy="50" r="8" fill="var(--gold)" />
-              {Array.from({ length: 24 }).map((_, i) => (
-                <line
-                  key={i}
-                  x1="50"
-                  y1="50"
-                  x2={50 + 41 * Math.cos((i * 15 * Math.PI) / 180)}
-                  y2={50 + 41 * Math.sin((i * 15 * Math.PI) / 180)}
-                  stroke="var(--gold)"
-                  strokeWidth="3.5"
-                />
+        {/* Top tricolor bar */}
+        <div style={styles.tricolorBar}>
+          <div style={{ flex: 1, background: '#FF9933' }} />
+          <div style={{ flex: 1, background: '#fff' }} />
+          <div style={{ flex: 1, background: '#138808' }} />
+        </div>
+
+        <div style={styles.footerBody}>
+          <div style={styles.footerGrid}>
+            {/* Brand column */}
+            <div style={styles.footerBrandCol}>
+              <div style={styles.footerLogo}>
+                <svg viewBox="0 0 100 100" width="32" height="32" style={{ animation: 'chakra-spin 25s linear infinite', flexShrink: 0 }}>
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="var(--gold)" strokeWidth="4" />
+                  <circle cx="50" cy="50" r="8" fill="var(--gold)" />
+                  {Array.from({ length: 24 }).map((_, i) => (
+                    <line key={i} x1="50" y1="50"
+                      x2={50 + 41 * Math.cos((i * 15 * Math.PI) / 180)}
+                      y2={50 + 41 * Math.sin((i * 15 * Math.PI) / 180)}
+                      stroke="var(--gold)" strokeWidth="2.5" />
+                  ))}
+                </svg>
+                <span style={{ fontWeight: 800, color: '#fff', fontSize: 22, letterSpacing: '-0.3px' }}>Saarthi AI</span>
+              </div>
+              <p style={styles.footerTagline}>आपका डिजिटल साथी</p>
+              <p style={styles.footerDesc}>India's first multi-agent AI platform built for Bharat — bridging the digital divide one conversation at a time.</p>
+              <div style={styles.footerBadges}>
+                <span style={styles.footerBadge}>🇮🇳 Made in India</span>
+                <span style={styles.footerBadge}>🔒 Privacy First</span>
+                <span style={styles.footerBadge}>⚡ Free Forever</span>
+              </div>
+            </div>
+
+            {/* Agents column */}
+            <div style={styles.footerCol}>
+              <h4 style={styles.footerColTitle}>AI Agents</h4>
+              {[
+                ['🏡', 'Amma Saarthi', 'For homemakers & mothers'],
+                ['🎓', 'Student Saarthi', 'For students & graduates'],
+                ['💼', 'Business Saarthi', 'For MSMEs & entrepreneurs'],
+                ['🌟', 'Senior Saarthi', 'For elderly citizens'],
+              ].map(([icon, name, desc]) => (
+                <div key={name} style={styles.footerAgentItem} onClick={() => navigate('/login')}>
+                  <span style={styles.footerAgentIcon}>{icon}</span>
+                  <div>
+                    <div style={styles.footerAgentName}>{name}</div>
+                    <div style={styles.footerAgentDesc}>{desc}</div>
+                  </div>
+                </div>
               ))}
-            </svg>
-            <span style={{ fontWeight: 800, color: '#fff', fontSize: 18 }}>Saarthi AI</span>
+            </div>
+
+            {/* Features column */}
+            <div style={styles.footerCol}>
+              <h4 style={styles.footerColTitle}>Features</h4>
+              {['🛡️ Scam Shield Protection', '🏛️ Government Schemes Guide', '📚 AI Study Notes', '🍳 Smart Recipe Generator', '🎤 Voice AI (6 languages)', '🧠 Memory & RAG System', '📊 Business Insights', '🆘 Senior SOS'].map(f => (
+                <div key={f} style={styles.footerFeatureItem}>{f}</div>
+              ))}
+            </div>
+
+            {/* Resources column */}
+            <div style={styles.footerCol}>
+              <h4 style={styles.footerColTitle}>Technology</h4>
+              {[
+                ['⚡', 'Gemini 2.0 Flash', 'Google AI'],
+                ['🔍', 'RAG System', 'Local Knowledge Base'],
+                ['🧠', 'Agent Memory', 'Persistent Context'],
+                ['🎤', 'Voice AI', 'Web Speech API'],
+                ['🌐', 'Multilingual', '6 Indian Languages'],
+                ['⚛️', 'React + Vite', 'Frontend'],
+                ['🔐', 'Firebase Auth', 'Authentication'],
+              ].map(([icon, name, sub]) => (
+                <div key={name} style={styles.footerTechItem}>
+                  <span style={{ fontSize: 14 }}>{icon}</span>
+                  <div>
+                    <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.85)', fontWeight: 600 }}>{name}</div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>{sub}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <p style={styles.footerTagline}>आपका डिजिटल साथी — Guiding India into the Digital Future</p>
-          <p style={styles.footerCopy}>Built with ❤️ for Bharat · © 2025-2026 Saarthi AI</p>
+
+          {/* Stats bar */}
+          <div style={styles.footerStats}>
+            {[['4', 'AI Agents'], ['60+', 'Knowledge Chunks'], ['6', 'Languages'], ['100%', 'Free to Use'], ['0', 'Data Sold']].map(([num, label]) => (
+              <div key={label} style={styles.footerStat}>
+                <div style={styles.footerStatNum}>{num}</div>
+                <div style={styles.footerStatLabel}>{label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom bar */}
+          <div style={styles.footerBottom}>
+            <div style={styles.footerCopy}>
+              © 2025–2026 Saarthi AI · Built with ❤️ for Bharat · Google Capstone Project
+            </div>
+            <div style={styles.footerLinks}>
+              {['Privacy Policy', 'Terms of Use', 'Contact Us', 'GitHub'].map(l => (
+                <span key={l} style={styles.footerLink}>{l}</span>
+              ))}
+            </div>
+          </div>
         </div>
       </footer>
     </div>
@@ -367,9 +449,30 @@ const styles = {
   ctaContent: { maxWidth: 600, margin: '0 auto' },
   ctaTitle: { fontSize: 'clamp(1.5rem, 3vw, 2.2rem)', fontWeight: 800, color: '#fff', marginBottom: 16 },
   ctaDesc: { fontSize: 16, color: 'rgba(255,255,255,0.7)', marginBottom: 32 },
-  footer: { background: 'var(--royal-burgundy)', padding: '50px 24px', borderTop: '2px solid var(--gold)' },
-  footerInner: { maxWidth: 600, margin: '0 auto', textAlign: 'center' },
-  footerBrand: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 16 },
-  footerTagline: { fontSize: 14, color: 'rgba(255,255,255,0.6)', marginBottom: 12 },
-  footerCopy: { fontSize: 12, color: 'rgba(255,255,255,0.4)' },
+  footer: { background: 'var(--royal-burgundy)', borderTop: '2px solid var(--gold)' },
+  tricolorBar: { display: 'flex', height: 4 },
+  footerBody: { maxWidth: 1280, margin: '0 auto', padding: '56px 24px 32px' },
+  footerGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 40, marginBottom: 48 },
+  footerBrandCol: { maxWidth: 280 },
+  footerLogo: { display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 },
+  footerTagline: { fontSize: 15, color: 'var(--gold)', fontWeight: 600, marginBottom: 10 },
+  footerDesc: { fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, marginBottom: 18 },
+  footerBadges: { display: 'flex', flexWrap: 'wrap', gap: 8 },
+  footerBadge: { fontSize: 11, color: 'rgba(255,255,255,0.7)', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', padding: '4px 10px', borderRadius: 'var(--r-full)', fontWeight: 600 },
+  footerCol: {},
+  footerColTitle: { fontSize: 12, fontWeight: 700, color: 'var(--gold)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 16 },
+  footerAgentItem: { display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, cursor: 'pointer', padding: '6px 8px', borderRadius: 8, transition: 'background 0.15s' },
+  footerAgentIcon: { fontSize: 20, flexShrink: 0 },
+  footerAgentName: { fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.85)' },
+  footerAgentDesc: { fontSize: 11, color: 'rgba(255,255,255,0.4)' },
+  footerFeatureItem: { fontSize: 12.5, color: 'rgba(255,255,255,0.6)', marginBottom: 9, lineHeight: 1.4 },
+  footerTechItem: { display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 10 },
+  footerStats: { display: 'flex', justifyContent: 'space-around', padding: '24px 0', borderTop: '1px solid rgba(255,255,255,0.08)', borderBottom: '1px solid rgba(255,255,255,0.08)', marginBottom: 24, flexWrap: 'wrap', gap: 16 },
+  footerStat: { textAlign: 'center' },
+  footerStatNum: { fontSize: 26, fontWeight: 800, color: 'var(--gold)' },
+  footerStatLabel: { fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', marginTop: 2 },
+  footerBottom: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 },
+  footerCopy: { fontSize: 12, color: 'rgba(255,255,255,0.35)' },
+  footerLinks: { display: 'flex', gap: 20, flexWrap: 'wrap' },
+  footerLink: { fontSize: 12, color: 'rgba(255,255,255,0.45)', cursor: 'pointer', transition: 'color 0.15s' },
 };

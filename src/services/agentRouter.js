@@ -5,6 +5,7 @@
 import ragService    from './rag.js';
 import memoryService from './memory.js';
 import geminiService from './gemini.js';
+import apiService from './api.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // AGENT DEFINITIONS — true differentiation per agent
@@ -231,6 +232,256 @@ TOOLS AVAILABLE:
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// PERSONA TOOL REGISTRY
+// ─────────────────────────────────────────────────────────────────────────────
+
+const TOOL_REGISTRY = {
+  student: {
+    search_scholarships: {
+      description: 'Search scholarship opportunities from the scholarship database.',
+      execute: async (userMessage) => {
+        const match = userMessage.match(/(engineering|medical|law|arts|mba|upsc|bca|msc|phd|diploma|undergraduate|postgraduate|college|school)/i);
+        const category = match ? match[1] : null;
+        const scholarships = await apiService.getScholarships(category);
+        const list = Array.isArray(scholarships) ? scholarships.slice(0, 3) : [];
+
+        if (!list.length) {
+          return {
+            toolName: 'search_scholarships',
+            success: true,
+            summary: 'I could not fetch a live scholarship list right now, but I can still help you shortlist the right options by field and eligibility.',
+            data: [],
+            formatted: 'No live scholarship data available right now.',
+          };
+        }
+
+        const formatted = list.map((item, index) => `${index + 1}. ${item.name || 'Scholarship'}${item.provider ? ` — ${item.provider}` : ''}${item.deadline ? ` • Deadline: ${item.deadline}` : ''}`).join('\n');
+
+        return {
+          toolName: 'search_scholarships',
+          success: true,
+          summary: `I found ${list.length} scholarship option(s) that look relevant.`,
+          data: list,
+          formatted,
+        };
+      },
+    },
+    generate_study_plan: {
+      description: 'Create a structured study plan based on subject, days, and hours per day.',
+      execute: (userMessage) => {
+        const subjectMatch = userMessage.match(/for\s+([a-zA-Z0-9\s-]+)/i) || userMessage.match(/subject\s+([a-zA-Z0-9\s-]+)/i);
+        const daysMatch = userMessage.match(/(\d+)\s*(day|days|week|weeks)/i);
+        const hoursMatch = userMessage.match(/(\d+)\s*(hour|hours|hr|hrs)/i);
+
+        const subject = subjectMatch ? subjectMatch[1].trim() : 'core subjects';
+        const days = Math.max(1, Math.min(7, Number(daysMatch?.[1]) || 7));
+        const hoursPerDay = Math.max(1, Math.min(6, Number(hoursMatch?.[1]) || 2));
+
+        const plan = Array.from({ length: days }, (_, index) => {
+          const topic = index === 0 ? 'Foundation and weak areas' : index === 1 ? 'Practice and revision' : 'Mixed practice and review';
+          return `${index + 1}. ${topic}: spend ${hoursPerDay} hours on ${subject} and review the key points.`;
+        }).join('\n');
+
+        return {
+          toolName: 'generate_study_plan',
+          success: true,
+          summary: `Here is a ${days}-day study plan for ${subject} at ${hoursPerDay} hours per day.`,
+          data: { subject, days, hoursPerDay },
+          formatted: plan,
+        };
+      },
+    },
+  },
+
+  senior: {
+    check_scam_message: {
+      description: 'Analyze a suspicious message or call script for scam indicators.',
+      execute: async (userMessage, language) => {
+        const analysis = await geminiService.analyzeScam(userMessage, 'whatsapp', language);
+        if (analysis && typeof analysis.riskScore === 'number') {
+          return {
+            toolName: 'check_scam_message',
+            success: true,
+            summary: `This looks ${analysis.riskLevel?.toLowerCase() || 'suspicious'} with a risk score of ${analysis.riskScore}/100.`,
+            data: analysis,
+            formatted: `${analysis.recommendation || 'Stay cautious.'}\n${(analysis.detectedScams || []).map(item => `• ${item.type}: ${item.description}`).join('\n')}`,
+          };
+        }
+
+        const lower = userMessage.toLowerCase();
+        const redFlags = [];
+        if (/(otp|one time password|verify|bank|upi|kyc)/i.test(lower)) redFlags.push('urgent verification request');
+        if (/(lottery|prize|won|claim|refund)/i.test(lower)) redFlags.push('too-good-to-be-true reward');
+        if (/(click|link|whatsapp|call|telegram)/i.test(lower)) redFlags.push('suspicious link or urgency');
+
+        return {
+          toolName: 'check_scam_message',
+          success: true,
+          summary: redFlags.length ? `I found signs of ${redFlags.join(' and ')}.` : 'The message does not show obvious scam markers, but caution is still wise.',
+          data: { redFlags },
+          formatted: redFlags.length ? `Possible warning signs: ${redFlags.join(', ')}` : 'No obvious scam markers found.',
+        };
+      },
+    },
+    set_reminder: {
+      description: 'Create a reminder for medicine, appointments, or general tasks.',
+      execute: async (userMessage) => {
+        const lower = userMessage.toLowerCase();
+        const type = /medicine|pill|tablet|dose/i.test(lower) ? 'medicine' : /appointment|doctor|clinic|visit/i.test(lower) ? 'appointment' : 'task';
+        const description = userMessage.replace(/remind|reminder|please|set/i, '').trim() || `${type} reminder`;
+        const dueDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+        const reminder = await apiService.createReminder(type, description, dueDate);
+
+        return {
+          toolName: 'set_reminder',
+          success: true,
+          summary: `I have saved a ${type} reminder for you.`,
+          data: reminder,
+          formatted: `Reminder saved: ${description}`,
+        };
+      },
+    },
+  },
+
+  business: {
+    calculate_gst: {
+      description: 'Calculate GST for an amount using either exclusive or inclusive pricing.',
+      execute: (userMessage) => {
+        const amountMatch = userMessage.match(/₹?\s?(\d+(?:,\d{3})*(?:\.\d+)?)/);
+        const rateMatch = userMessage.match(/(\d+(?:\.\d+)?)\s*%/);
+        const amount = Number((amountMatch?.[1] || '1000').replace(/,/g, ''));
+        const rate = Number(rateMatch?.[1] || '18');
+        const inclusive = /inclusive/i.test(userMessage);
+
+        const tax = inclusive ? amount - (amount / (1 + rate / 100)) : amount * (rate / 100);
+        const total = inclusive ? amount : amount + tax;
+        const net = inclusive ? amount / (1 + rate / 100) : amount;
+
+        return {
+          toolName: 'calculate_gst',
+          success: true,
+          summary: `GST at ${rate}% for ₹${amount.toLocaleString()} is calculated using ${inclusive ? 'inclusive' : 'exclusive'} pricing.`,
+          data: { amount, rate, inclusive, tax, total, net },
+          formatted: `Amount: ₹${amount.toLocaleString()}\nGST Rate: ${rate}%\nGST Amount: ₹${tax.toFixed(2)}\nTotal: ₹${total.toFixed(2)}`,
+        };
+      },
+    },
+    lookup_customer: {
+      description: 'Look up customer purchase history and total spending.',
+      execute: async (userMessage) => {
+        const customers = await apiService.getCustomers();
+        const list = Array.isArray(customers) ? customers : [];
+        const keyword = userMessage.match(/customer\s+([a-zA-Z0-9\s-]+)/i)?.[1] || userMessage.match(/for\s+([a-zA-Z0-9\s-]+)/i)?.[1];
+
+        const filtered = keyword
+          ? list.filter((customer) => `${customer.name || ''} ${customer.phone || ''} ${customer.email || ''}`.toLowerCase().includes(keyword.toLowerCase()))
+          : list;
+
+        const selected = filtered.slice(0, 3);
+        const totalSpending = selected.reduce((sum, item) => sum + Number(item.totalSpent || item.total_spent || 0), 0);
+        const formatted = selected.length
+          ? selected.map((item) => `${item.name || 'Customer'} — ₹${Number(item.totalSpent || item.total_spent || 0).toLocaleString()}${item.lastPurchase ? ` • Last purchase: ${item.lastPurchase}` : ''}`).join('\n')
+          : 'No customer records were found.';
+
+        return {
+          toolName: 'lookup_customer',
+          success: true,
+          summary: selected.length ? `I found ${selected.length} matching customer record(s) with total spending of ₹${totalSpending.toLocaleString()}.` : 'No matching customer records were found.',
+          data: selected,
+          formatted,
+        };
+      },
+    },
+  },
+};
+
+function getRelevantToolNames(persona, userMessage) {
+  const lower = userMessage.toLowerCase();
+
+  switch (persona) {
+    case 'student': {
+      const tools = [];
+      if (/(scholarship|scholarships|financial aid|fellowship|fee waiver)/i.test(lower)) tools.push('search_scholarships');
+      if (/(study plan|study schedule|timetable|revision plan|daily plan|exam plan|study for|prepare for)/i.test(lower)) tools.push('generate_study_plan');
+      return tools;
+    }
+    case 'senior': {
+      const tools = [];
+      if (/(scam|fraud|otp|lottery|fake|suspicious|message|call|whatsapp|sms)/i.test(lower)) tools.push('check_scam_message');
+      if (/(remind|reminder|medicine|appointment|doctor|clinic|task|pill|checkup)/i.test(lower)) tools.push('set_reminder');
+      return tools;
+    }
+    case 'business': {
+      const tools = [];
+      if (/(gst|tax|calculate|invoice|vat)/i.test(lower)) tools.push('calculate_gst');
+      if (/(customer|client|purchase history|spending|buyer|sales|consumer)/i.test(lower)) tools.push('lookup_customer');
+      return tools;
+    }
+    default:
+      return [];
+  }
+}
+
+async function executePersonaTools(persona, userMessage, language) {
+  const toolNames = getRelevantToolNames(persona, userMessage);
+  const results = [];
+
+  for (const toolName of toolNames) {
+    const toolDef = TOOL_REGISTRY[persona]?.[toolName];
+    if (!toolDef) continue;
+
+    try {
+      const result = await toolDef.execute(userMessage, language);
+      results.push(result);
+    } catch (error) {
+      console.error(`Tool execution failed for ${persona}.${toolName}:`, error);
+      results.push({
+        toolName,
+        success: false,
+        summary: 'The tool could not run right now, but I can still help from general guidance.',
+        data: null,
+        formatted: '',
+      });
+    }
+  }
+
+  return results;
+}
+
+function buildToolContext(toolResults) {
+  if (!toolResults?.length) return '';
+
+  const sections = toolResults.map((result) => {
+    const summary = result.success ? result.summary : result.summary;
+    const formatted = result.formatted ? `\n${result.formatted}` : '';
+    return `- ${result.toolName}: ${summary}${formatted}`;
+  });
+
+  return `PERSONA TOOL RESULTS:\n${sections.join('\n')}`;
+}
+
+function buildToolFallbackResponse(persona, toolResults, language) {
+  const toolText = toolResults
+    .filter((result) => result.success)
+    .map((result) => result.formatted || result.summary)
+    .join('\n\n');
+
+  if (!toolText) return null;
+
+  const lang = language === 'hi' ? 'hi' : language === 'ta' ? 'ta' : language === 'te' ? 'te' : 'en';
+  if (lang === 'hi') {
+    return `${toolText}\n\nमुझे उम्मीद है कि यह मददगार रहा। यदि आप चाहें, तो मैं इसे और सरल तरीके से समझा सकता हूं।`;
+  }
+  if (lang === 'ta') {
+    return `${toolText}\n\nஇது உங்களுக்கு உதவியாக இருந்தால் நான் இன்னும் விரிவாக விளக்க முடியும்.`;
+  }
+  if (lang === 'te') {
+    return `${toolText}\n\nఇది మీకు ఉపయోగకరంగా ఉంటే, నేను ఇంకా సులభంగా వివరించగలను.`;
+  }
+  return `${toolText}\n\nI can break this down further if you want a simpler explanation.`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // AGENT ROUTER — main function
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -278,7 +529,11 @@ const agentRouter = {
       : '';
     const usedMemory = memoryContext.length > 0;
 
-    // ── Step 4: Build full system prompt ─────────────────────────────────
+    // ── Step 4: Execute persona-specific tools if relevant ─────────────
+    const toolResults = await executePersonaTools(persona, userMessage, language);
+    const toolContext = buildToolContext(toolResults);
+
+    // ── Step 5: Build full system prompt ─────────────────────────────────
     const langInstruction = buildLanguageInstruction(language);
 
     const fullSystemPrompt = [
@@ -286,11 +541,12 @@ const agentRouter = {
       langInstruction,
       memoryContext,
       usedRAG ? ragService.buildContextPrompt(ragContext) : '',
+      toolContext,
     ]
       .filter(Boolean)
       .join('\n');
 
-    // ── Step 5: Build conversation for Gemini ───────────────────────────
+    // ── Step 6: Build conversation for Gemini ───────────────────────────
     // Use last 10 messages for context (save tokens)
     const recentHistory = conversationHistory.slice(-10);
 
@@ -305,9 +561,11 @@ const agentRouter = {
       );
     }
 
-    // ── Step 7: Fallback if Gemini unavailable ───────────────────────────
+    // ── Step 7: Fallback if Gemini unavailable or tools should lead ─────
     if (!response) {
-      response = getFallbackResponse(persona, userMessage, language);
+      response = toolResults.length > 0
+        ? buildToolFallbackResponse(persona, toolResults, language)
+        : getFallbackResponse(persona, userMessage, language);
     }
 
     // ── Step 8: Save assistant response to memory ────────────────────────
@@ -327,6 +585,7 @@ const agentRouter = {
       agentColor: agent.color,
       usedRAG,
       usedMemory,
+      toolsUsed: toolResults.map((item) => item.toolName),
     };
   },
 

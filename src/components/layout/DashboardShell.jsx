@@ -74,7 +74,6 @@ export default function DashboardShell({ persona, navItems, children }) {
         transition: 'left 0.3s ease',
         background: `linear-gradient(180deg, ${persona?.colorDark || '#0F172A'} 0%, #0F172A 100%)`,
         borderRight: '3px solid var(--gold)',
-        boxShadow: '0 30px 80px rgba(15,23,42,0.18)',
       }}
     >
       {/* Logo */}
@@ -84,7 +83,7 @@ export default function DashboardShell({ persona, navItems, children }) {
           background: accentColor + '22',
           color: accentColor,
           border: `1.5px solid ${accentColor}`,
-          boxShadow: `0 4px 16px ${accentColor}33`
+          boxShadow: `0 4px 10px ${accentColor}33`
         }}>
           {persona?.avatar || '🤖'}
         </div>
@@ -130,10 +129,6 @@ export default function DashboardShell({ persona, navItems, children }) {
 
       {/* Bottom buttons */}
       <div style={{ ...styles.sidebarBottom, position: 'relative', zIndex: 1 }}>
-        <div style={styles.sidebarStatus}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>✨</span>
-          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.72)', lineHeight: 1.4 }}>AI-powered insights made for Indian users</span>
-        </div>
         <div style={{ marginBottom: 8 }}>
           <LanguageSelector />
         </div>
@@ -274,33 +269,23 @@ const styles = {
     whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
   },
   userEmail: {
-    fontSize: 11, color: 'rgba(255,255,255,0.55)',
+    fontSize: 11, color: 'rgba(255,255,255,0.45)',
     whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-  },
-  sidebarStatus: {
-    marginBottom: 16,
-    display: 'flex',
-    alignItems: 'center',
-    gap: 10,
-    padding: '12px 14px',
-    background: 'rgba(255,255,255,0.09)',
-    borderRadius: 'var(--r-xl)',
-    border: '1px solid rgba(255,255,255,0.12)',
   },
   nav: {
     flex: 1,
     padding: '8px 12px',
     display: 'flex',
     flexDirection: 'column',
-    gap: 8,
+    gap: 2,
     overflowY: 'auto',
   },
   navItem: {
-    display: 'flex', alignItems: 'center', gap: 12,
-    padding: '12px 14px', borderRadius: 'var(--r-xl)',
-    fontSize: 14, fontWeight: 600,
+    display: 'flex', alignItems: 'center', gap: 10,
+    padding: '10px 12px', borderRadius: 10,
+    fontSize: 13.5, fontWeight: 500,
     textDecoration: 'none',
-    transition: 'all 0.2s ease',
+    transition: 'all 0.2s',
   },
   navIcon: { fontSize: 16, width: 20, textAlign: 'center', flexShrink: 0 },
   sidebarBottom: {
@@ -330,7 +315,6 @@ const styles = {
     flexDirection: 'column',
     minWidth: 0,
     minHeight: '100vh',
-    background: 'var(--bg)',
   },
   mobileBar: {
     display: 'flex',
@@ -366,20 +350,19 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,
-    transition: 'transform 0.2s ease',
+    transition: 'transform 0.2s',
   },
   floatingChat: {
     position: 'fixed',
     bottom: 100,
     right: 30,
-    width: 400,
-    maxWidth: 'calc(100vw - 40px)',
+    width: 360,
     background: '#fff',
-    borderRadius: 'var(--r-2xl)',
-    boxShadow: '0 28px 60px rgba(15,23,42,0.18)',
+    borderRadius: 'var(--r-xl)',
+    boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
     zIndex: 1000,
     overflow: 'hidden',
-    border: '1px solid rgba(15,23,42,0.08)',
+    border: '1px solid var(--gray-200)',
     display: 'flex',
     flexDirection: 'column',
   },

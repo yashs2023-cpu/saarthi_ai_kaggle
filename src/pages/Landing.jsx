@@ -48,17 +48,18 @@ export default function LandingPage() {
       {/* ── Navbar ── */}
       <nav style={{
         ...styles.navbar,
-        background: 'rgba(255,255,255,0.92)',
-        boxShadow: '0 24px 70px rgba(15,23,42,0.08)',
-        backdropFilter: 'blur(18px)',
-        borderBottom: '1px solid rgba(15,23,42,0.07)',
+        background: scrollY > 40 ? 'rgba(255,248,231,0.95)' : 'transparent',
+        boxShadow: scrollY > 40 ? 'var(--shadow-sm)' : 'none',
+        backdropFilter: scrollY > 40 ? 'blur(12px)' : 'none',
+        borderBottom: scrollY > 40 ? '2px solid var(--gold)' : 'none',
       }}>
         <div style={styles.navInner}>
           <div style={styles.navBrand}>
+            {/* Spinning Ashoka Chakra Logo */}
             <div style={styles.brandLogoContainer}>
               <svg viewBox="0 0 100 100" width="36" height="36" style={{ animation: 'chakra-spin 25s linear infinite' }}>
-                <circle cx="50" cy="50" r="45" fill="none" stroke="var(--primary)" strokeWidth="4" />
-                <circle cx="50" cy="50" r="8" fill="var(--primary)" />
+                <circle cx="50" cy="50" r="45" fill="none" stroke="var(--royal-maroon)" strokeWidth="4" />
+                <circle cx="50" cy="50" r="8" fill="var(--royal-maroon)" />
                 {Array.from({ length: 24 }).map((_, i) => (
                   <line
                     key={i}
@@ -66,7 +67,7 @@ export default function LandingPage() {
                     y1="50"
                     x2={50 + 41 * Math.cos((i * 15 * Math.PI) / 180)}
                     y2={50 + 41 * Math.sin((i * 15 * Math.PI) / 180)}
-                    stroke="var(--primary)"
+                    stroke="var(--royal-maroon)"
                     strokeWidth="2.5"
                   />
                 ))}
@@ -74,33 +75,12 @@ export default function LandingPage() {
             </div>
             <span style={styles.brandText}>Saarthi AI</span>
           </div>
-
-          <div style={styles.navLinks}>
-            {['Home', 'Features', 'How it Works', 'About Us', 'Contact'].map((link) => (
-              <button
-                key={link}
-                style={styles.navLink}
-                onClick={() => {
-                  const ids = {
-                    Home: null,
-                    Features: 'features',
-                    'How it Works': 'personas',
-                    'About Us': 'testimonials',
-                    Contact: 'footer',
-                  };
-                  const id = ids[link];
-                  if (!id) window.scrollTo({ top: 0, behavior: 'smooth' });
-                  else document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                {link}
-              </button>
-            ))}
+          <div style={styles.navActions}>
+            <button style={styles.navLogin} onClick={() => navigate('/login')}>Login</button>
+            <button className="btn btn-royal btn-sm" onClick={() => navigate('/login')}>
+              Get Started →
+            </button>
           </div>
-
-          <button className="btn btn-gold btn-sm" onClick={() => navigate('/login')}>
-            Get Started
-          </button>
         </div>
       </nav>
 
@@ -111,73 +91,56 @@ export default function LandingPage() {
         <div style={styles.heroCircle3} />
 
         <div style={styles.heroContent} className="anim-up">
-          <div style={styles.heroEyebrow}>AI Companion for Every Indian</div>
-          <h1 style={styles.heroTitle}>Saarthi AI</h1>
+          <div className="badge badge-royal" style={{ fontSize: 13, marginBottom: 20, display: 'inline-flex' }}>
+            🇮🇳 Made for Bharat with Love
+          </div>
+          <h1 style={styles.heroTitle}>
+            नमस्ते 🙏<br />
+            <span className="gradient-royal">Your AI Saarthi</span>
+            <br />is here
+          </h1>
           <p style={styles.heroDesc}>
-            One AI companion. Four personalities. Endless possibilities for learning, health, business, and safety.
+            India's first multi-persona AI companion — for students, families,
+            seniors and entrepreneurs. Powered by Gemini. Built with love for Bharat.
           </p>
           <div style={styles.heroCTAs}>
             <button className="btn btn-gold btn-lg" onClick={() => navigate('/login')}>
-              Explore Saarthi
+              Choose Your Saarthi 🚀
             </button>
             <button
               className="btn btn-outline btn-lg"
-              style={{ color: 'var(--text-primary)', borderColor: 'rgba(15,23,42,0.12)' }}
+              style={{ color: 'var(--royal-maroon)', borderColor: 'var(--royal-maroon)' }}
               onClick={() => document.getElementById('personas')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              Watch Demo
+              See All Personas
             </button>
           </div>
-          <div style={styles.heroTrust}>
-            {['20+ Smart Features', '50K+ Happy Users', '95% Satisfaction', '24/7 AI Assistance'].map((item) => (
-              <div key={item} style={styles.heroTrustItem}>{item}</div>
+          <div style={styles.heroStats}>
+            {[['4', 'AI Personas'], ['20+', 'Features'], ['6', 'Languages'], ['100%', 'Free']].map(([num, label]) => (
+              <div key={label} style={styles.heroStat}>
+                <div style={styles.heroStatNum}>{num}</div>
+                <div style={styles.heroStatLabel}>{label}</div>
+              </div>
             ))}
           </div>
         </div>
 
         <div style={styles.heroVisual} className="anim-right">
-          <div style={styles.heroPersonaGrid}>
-            <div style={{ ...styles.heroPersonaCard, ...styles.heroPersonaCardAccent }}>
-              <div style={styles.heroPersonaEmoji}>👩‍🍳</div>
-              <div style={styles.heroPersonaName}>Amma Saarthi</div>
-              <div style={styles.heroPersonaLabel}>Empowering Home Makers</div>
-            </div>
-            <div style={{ ...styles.heroPersonaCard, ...styles.heroPersonaCardAccent }}>
-              <div style={styles.heroPersonaEmoji}>🎓</div>
-              <div style={styles.heroPersonaName}>Student Saarthi</div>
-              <div style={styles.heroPersonaLabel}>Guiding Future Leaders</div>
-            </div>
-
-            <div style={styles.heroCenterLogo}>
-              <div style={styles.heroLogoShell}>
-                <svg viewBox="0 0 100 100" width="52" height="52" style={{ animation: 'chakra-spin 25s linear infinite' }}>
-                  <circle cx="50" cy="50" r="45" fill="none" stroke="var(--primary)" strokeWidth="3" />
-                  <circle cx="50" cy="50" r="8" fill="var(--primary)" />
-                  {Array.from({ length: 24 }).map((_, i) => (
-                    <line
-                      key={i}
-                      x1="50"
-                      y1="50"
-                      x2={50 + 35 * Math.cos((i * 15 * Math.PI) / 180)}
-                      y2={50 + 35 * Math.sin((i * 15 * Math.PI) / 180)}
-                      stroke="var(--primary)"
-                      strokeWidth="2"
-                    />
-                  ))}
-                </svg>
-                <div style={styles.heroLogoText}>Saarthi AI</div>
+          <div style={styles.heroCard} className="saarthi-card-royal">
+            <div style={styles.heroCardHeader}>
+              <div style={styles.heroCardAvatar}>👩‍🍳</div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>Amma Saarthi</div>
+                <div style={{ fontSize: 12, color: 'var(--gray-500)' }}>Online · Ready to help</div>
               </div>
+              <div style={styles.onlineDot} />
             </div>
-
-            <div style={{ ...styles.heroPersonaCard, ...styles.heroPersonaCardAccent }}>
-              <div style={styles.heroPersonaEmoji}>👴</div>
-              <div style={styles.heroPersonaName}>Senior Saarthi</div>
-              <div style={styles.heroPersonaLabel}>Caring for Our Elders</div>
+            <div style={styles.heroChatBubble}>
+              🙏 Namaste! Today there's a new government scheme for you — PM-Kisan ₹2,000 installment is ready!
             </div>
-            <div style={{ ...styles.heroPersonaCard, ...styles.heroPersonaCardAccent }}>
-              <div style={styles.heroPersonaEmoji}>💼</div>
-              <div style={styles.heroPersonaName}>Business Saarthi</div>
-              <div style={styles.heroPersonaLabel}>Growing Small Businesses</div>
+            <div style={styles.heroChatBubbleUser}>How do I check my status?</div>
+            <div style={styles.heroChatBubble}>
+              Easy! Go to pmkisan.gov.in → Beneficiary Status → Enter Aadhaar 📱
             </div>
           </div>
         </div>
@@ -296,23 +259,29 @@ export default function LandingPage() {
 
       {/* ── Professional Footer ── */}
       <footer style={styles.footer}>
+        {/* Top tricolor bar */}
+        <div style={styles.tricolorBar}>
+          <div style={{ flex: 1, background: '#FF9933' }} />
+          <div style={{ flex: 1, background: '#fff' }} />
+          <div style={{ flex: 1, background: '#138808' }} />
+        </div>
+
         <div style={styles.footerBody}>
           <div style={styles.footerGrid}>
+            {/* Brand column */}
             <div style={styles.footerBrandCol}>
               <div style={styles.footerLogo}>
-                <div style={styles.footerIcon}>
-                  <svg viewBox="0 0 100 100" width="32" height="32" style={{ animation: 'chakra-spin 25s linear infinite', flexShrink: 0 }}>
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="var(--primary)" strokeWidth="4" />
-                    <circle cx="50" cy="50" r="8" fill="var(--primary)" />
-                    {Array.from({ length: 24 }).map((_, i) => (
-                      <line key={i} x1="50" y1="50"
-                        x2={50 + 41 * Math.cos((i * 15 * Math.PI) / 180)}
-                        y2={50 + 41 * Math.sin((i * 15 * Math.PI) / 180)}
-                        stroke="var(--primary)" strokeWidth="2.5" />
-                    ))}
-                  </svg>
-                </div>
-                <span style={{ fontWeight: 800, color: '#0F172A', fontSize: 22, letterSpacing: '-0.3px' }}>Saarthi AI</span>
+                <svg viewBox="0 0 100 100" width="32" height="32" style={{ animation: 'chakra-spin 25s linear infinite', flexShrink: 0 }}>
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="var(--gold)" strokeWidth="4" />
+                  <circle cx="50" cy="50" r="8" fill="var(--gold)" />
+                  {Array.from({ length: 24 }).map((_, i) => (
+                    <line key={i} x1="50" y1="50"
+                      x2={50 + 41 * Math.cos((i * 15 * Math.PI) / 180)}
+                      y2={50 + 41 * Math.sin((i * 15 * Math.PI) / 180)}
+                      stroke="var(--gold)" strokeWidth="2.5" />
+                  ))}
+                </svg>
+                <span style={{ fontWeight: 800, color: '#fff', fontSize: 22, letterSpacing: '-0.3px' }}>Saarthi AI</span>
               </div>
               <p style={styles.footerTagline}>आपका डिजिटल साथी</p>
               <p style={styles.footerDesc}>India's first multi-agent AI platform built for Bharat — bridging the digital divide one conversation at a time.</p>
@@ -323,6 +292,7 @@ export default function LandingPage() {
               </div>
             </div>
 
+            {/* Agents column */}
             <div style={styles.footerCol}>
               <h4 style={styles.footerColTitle}>AI Agents</h4>
               {[
@@ -341,6 +311,7 @@ export default function LandingPage() {
               ))}
             </div>
 
+            {/* Features column */}
             <div style={styles.footerCol}>
               <h4 style={styles.footerColTitle}>Features</h4>
               {['🛡️ Scam Shield Protection', '🏛️ Government Schemes Guide', '📚 AI Study Notes', '🍳 Smart Recipe Generator', '🎤 Voice AI (6 languages)', '🧠 Memory & RAG System', '📊 Business Insights', '🆘 Senior SOS'].map(f => (
@@ -407,26 +378,19 @@ const styles = {
   brandText: { fontSize: 20, fontWeight: 800, color: 'var(--royal-maroon)', letterSpacing: '0.5px' },
   navActions: { display: 'flex', alignItems: 'center', gap: 12 },
   navLogin: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600, color: 'var(--royal-maroon)', padding: '8px 16px' },
-  navLinks: { display: 'flex', gap: 22, alignItems: 'center' },
-  navLink: { background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 14, fontWeight: 600, padding: '8px 10px', borderRadius: '999px', transition: 'background 0.2s' },
-  hero: { minHeight: '100vh', display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', alignItems: 'center', padding: '100px 24px 80px', maxWidth: 1280, margin: '0 auto', gap: 48, position: 'relative', overflow: 'hidden' },
-  heroEyebrow: { display: 'inline-flex', alignItems: 'center', gap: 10, padding: '10px 16px', borderRadius: '999px', background: 'rgba(255,209,135,0.22)', color: 'var(--primary-dark)', fontSize: 13, fontWeight: 700, marginBottom: 18, letterSpacing: '0.02em' },
-  heroContent: { position: 'relative', zIndex: 1, maxWidth: 640 },
-  heroTitle: { fontSize: 'clamp(3rem, 5vw, 4.25rem)', fontWeight: 900, lineHeight: 1.02, color: 'var(--text-primary)', marginBottom: 24 },
-  heroDesc: { fontSize: 18, color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: 32, maxWidth: 520 },
-  heroCTAs: { display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 32 },
-  heroTrust: { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 14, marginTop: 12, maxWidth: 520 },
-  heroTrustItem: { background: '#fff', borderRadius: '22px', padding: '14px 18px', fontSize: 13, color: 'var(--text-secondary)', boxShadow: '0 18px 50px rgba(15,23,42,0.06)', border: '1px solid rgba(15,23,42,0.08)' },
-  heroVisual: { position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 520, maxWidth: 520 },
-  heroPersonaGrid: { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 20, width: '100%', maxWidth: 520, position: 'relative', zIndex: 1 },
-  heroPersonaCard: { background: '#fff', borderRadius: '28px', padding: '26px 22px', display: 'grid', gap: 12, boxShadow: '0 24px 60px rgba(15,23,42,0.08)', border: '1px solid rgba(15,23,42,0.08)' },
-  heroPersonaCardAccent: { background: 'linear-gradient(180deg, #fff 0%, #fdf7ef 100%)' },
-  heroPersonaEmoji: { width: 52, height: 52, borderRadius: 18, display: 'grid', placeItems: 'center', fontSize: 26, background: 'rgba(255,138,0,0.12)' },
-  heroPersonaName: { fontSize: 16, fontWeight: 800, color: 'var(--text-primary)' },
-  heroPersonaLabel: { fontSize: 13, color: 'var(--text-secondary)' },
-  heroCenterLogo: { position: 'absolute', inset: '50% auto auto 50%', transform: 'translate(-50%, -50%)', zIndex: 2 },
-  heroLogoShell: { width: 180, minHeight: 180, borderRadius: '40px', background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(15,23,42,0.08)', boxShadow: '0 28px 80px rgba(15,23,42,0.12)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 24 },
-  heroLogoText: { fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' },
+  hero: { minHeight: '100vh', display: 'flex', alignItems: 'center', padding: '120px 24px 60px', maxWidth: 1280, margin: '0 auto', gap: 48, position: 'relative', overflow: 'hidden' },
+  heroCircle1: { position: 'absolute', top: 80, right: 120, width: 400, height: 400, borderRadius: '50%', background: 'rgba(128,0,32,0.04)', zIndex: 0 },
+  heroCircle2: { position: 'absolute', bottom: 60, right: 60, width: 250, height: 250, borderRadius: '50%', background: 'rgba(212,175,55,0.06)', zIndex: 0 },
+  heroCircle3: { position: 'absolute', top: 200, left: -80, width: 300, height: 300, borderRadius: '50%', background: 'rgba(0,95,115,0.03)', zIndex: 0 },
+  heroContent: { flex: 1, maxWidth: 580, position: 'relative', zIndex: 1 },
+  heroTitle: { fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 800, lineHeight: 1.1, color: 'var(--navy-deep)', marginBottom: 20 },
+  heroDesc: { fontSize: 18, color: 'var(--gray-600)', lineHeight: 1.7, marginBottom: 32, maxWidth: 480 },
+  heroCTAs: { display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 40 },
+  heroStats: { display: 'flex', gap: 32, flexWrap: 'wrap' },
+  heroStat: { textAlign: 'center' },
+  heroStatNum: { fontSize: 28, fontWeight: 800, color: 'var(--royal-maroon)' },
+  heroStatLabel: { fontSize: 12, fontWeight: 600, color: 'var(--gray-500)', textTransform: 'uppercase' },
+  heroVisual: { flex: 1, maxWidth: 400, position: 'relative', zIndex: 1 },
   heroCard: { background: '#fff', borderRadius: 'var(--r-2xl)', padding: 24, boxShadow: 'var(--shadow-xl)', border: '1px solid var(--gray-100)' },
   heroCardHeader: { display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, position: 'relative' },
   heroCardAvatar: { width: 40, height: 40, borderRadius: 12, background: 'var(--amma-bg)', fontSize: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' },

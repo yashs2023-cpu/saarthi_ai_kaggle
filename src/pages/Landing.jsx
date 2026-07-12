@@ -259,29 +259,23 @@ export default function LandingPage() {
 
       {/* ── Professional Footer ── */}
       <footer style={styles.footer}>
-        {/* Top tricolor bar */}
-        <div style={styles.tricolorBar}>
-          <div style={{ flex: 1, background: '#FF9933' }} />
-          <div style={{ flex: 1, background: '#fff' }} />
-          <div style={{ flex: 1, background: '#138808' }} />
-        </div>
-
         <div style={styles.footerBody}>
           <div style={styles.footerGrid}>
-            {/* Brand column */}
             <div style={styles.footerBrandCol}>
               <div style={styles.footerLogo}>
-                <svg viewBox="0 0 100 100" width="32" height="32" style={{ animation: 'chakra-spin 25s linear infinite', flexShrink: 0 }}>
-                  <circle cx="50" cy="50" r="45" fill="none" stroke="var(--gold)" strokeWidth="4" />
-                  <circle cx="50" cy="50" r="8" fill="var(--gold)" />
-                  {Array.from({ length: 24 }).map((_, i) => (
-                    <line key={i} x1="50" y1="50"
-                      x2={50 + 41 * Math.cos((i * 15 * Math.PI) / 180)}
-                      y2={50 + 41 * Math.sin((i * 15 * Math.PI) / 180)}
-                      stroke="var(--gold)" strokeWidth="2.5" />
-                  ))}
-                </svg>
-                <span style={{ fontWeight: 800, color: '#fff', fontSize: 22, letterSpacing: '-0.3px' }}>Saarthi AI</span>
+                <div style={styles.footerIcon}>
+                  <svg viewBox="0 0 100 100" width="32" height="32" style={{ animation: 'chakra-spin 25s linear infinite', flexShrink: 0 }}>
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="var(--primary)" strokeWidth="4" />
+                    <circle cx="50" cy="50" r="8" fill="var(--primary)" />
+                    {Array.from({ length: 24 }).map((_, i) => (
+                      <line key={i} x1="50" y1="50"
+                        x2={50 + 41 * Math.cos((i * 15 * Math.PI) / 180)}
+                        y2={50 + 41 * Math.sin((i * 15 * Math.PI) / 180)}
+                        stroke="var(--primary)" strokeWidth="2.5" />
+                    ))}
+                  </svg>
+                </div>
+                <span style={{ fontWeight: 800, color: '#0F172A', fontSize: 22, letterSpacing: '-0.3px' }}>Saarthi AI</span>
               </div>
               <p style={styles.footerTagline}>आपका डिजिटल साथी</p>
               <p style={styles.footerDesc}>India's first multi-agent AI platform built for Bharat — bridging the digital divide one conversation at a time.</p>
@@ -292,7 +286,6 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Agents column */}
             <div style={styles.footerCol}>
               <h4 style={styles.footerColTitle}>AI Agents</h4>
               {[
@@ -311,13 +304,16 @@ export default function LandingPage() {
               ))}
             </div>
 
-            {/* Features column */}
             <div style={styles.footerCol}>
               <h4 style={styles.footerColTitle}>Features</h4>
               {['🛡️ Scam Shield Protection', '🏛️ Government Schemes Guide', '📚 AI Study Notes', '🍳 Smart Recipe Generator', '🎤 Voice AI (6 languages)', '🧠 Memory & RAG System', '📊 Business Insights', '🆘 Senior SOS'].map(f => (
                 <div key={f} style={styles.footerFeatureItem}>{f}</div>
               ))}
             </div>
+          </div>
+        </div>
+      </footer>
+
 
             {/* Resources column */}
             <div style={styles.footerCol}>

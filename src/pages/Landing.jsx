@@ -310,10 +310,6 @@ export default function LandingPage() {
                 <div key={f} style={styles.footerFeatureItem}>{f}</div>
               ))}
             </div>
-          </div>
-        </div>
-      </footer>
-
 
             {/* Resources column */}
             <div style={styles.footerCol}>
